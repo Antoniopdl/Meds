@@ -3,7 +3,6 @@ options:
   bundleIdPrefix: com.antoniopineda
   deploymentTarget:
     iOS: "17.0"
-  xcodeVersion: "15.4"
 
 targets:
   MedLiveActivity:
@@ -20,6 +19,7 @@ targets:
           - UIInterfaceOrientationPortrait
     dependencies:
       - target: MedLiveWidgets
+        embed: true
 
   MedLiveWidgets:
     type: app-extension
@@ -27,6 +27,8 @@ targets:
     sources:
       - path: MedLiveWidgets
       - path: MedLiveActivity/Shared
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.antoniopineda.MedLiveActivity.MedLiveWidgets
     info:
       path: MedLiveWidgets/Info.plist
       properties:

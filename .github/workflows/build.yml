@@ -8,13 +8,10 @@ on:
 jobs:
   build:
     name: Build & Package IPA
-    runs-on: macos-14
+    runs-on: macos-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Select Xcode Version
-        run: sudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app
 
       - name: Install XcodeGen
         run: brew install xcodegen
@@ -22,23 +19,24 @@ jobs:
       - name: Generate Xcode Project (.xcodeproj)
         run: xcodegen generate
 
-      - name: Build Archive (Unsigned)
+      - name: Build Application (.app)
         run: |
-          xcodebuild archive \
+          xcodebuild \
             -project MedLiveActivity.xcodeproj \
             -scheme MedLiveActivity \
             -configuration Release \
             -sdk iphoneos \
             -destination 'generic/platform=iOS' \
-            -archivePath build/MedLiveActivity.xcarchive \
+            -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY=""
+            CODE_SIGN_IDENTITY="" \
+            build
 
       - name: Package IPA
         run: |
           mkdir -p Payload
-          cp -r build/MedLiveActivity.xcarchive/Products/Applications/MedLiveActivity.app Payload/
+          cp -r build/Build/Products/Release-iphoneos/MedLiveActivity.app Payload/
           zip -r MedLiveActivity.ipa Payload
 
       - name: Upload IPA Artifact

@@ -7,12 +7,26 @@ public struct MedicamentoAttributes: ActivityAttributes {
         public var estadoTexto: String
         public var horaProgramadaTexto: String
         public var fechaToma: Date
+        public var modo: String // "normal", "urgente", "compra"
+        public var unidadesRestantes: Int
+        public var minutosAtraso: Int
 
-        public init(fueTomado: Bool, estadoTexto: String, horaProgramadaTexto: String, fechaToma: Date) {
+        public init(
+            fueTomado: Bool,
+            estadoTexto: String,
+            horaProgramadaTexto: String,
+            fechaToma: Date,
+            modo: String = "normal",
+            unidadesRestantes: Int = 0,
+            minutosAtraso: Int = 0
+        ) {
             self.fueTomado = fueTomado
             self.estadoTexto = estadoTexto
             self.horaProgramadaTexto = horaProgramadaTexto
             self.fechaToma = fechaToma
+            self.modo = modo
+            self.unidadesRestantes = unidadesRestantes
+            self.minutosAtraso = minutosAtraso
         }
     }
 

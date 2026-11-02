@@ -4,7 +4,7 @@ import SwiftUI
 struct MedLiveActivityApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainTabView()
         }
     }
 }

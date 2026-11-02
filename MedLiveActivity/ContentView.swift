@@ -1,6 +1,7 @@
 import SwiftUI
 import ActivityKit
 import HealthKit
+import UIKit
 
 struct ItemMedicamento: Identifiable {
     let id = UUID()
@@ -69,7 +70,7 @@ struct ContentView: View {
 
                         // Acceso directo a Ajustes si iOS ya procesó la primera solicitud
                         Button {
-                            HealthKitManager.shared.abrirAjustesDeSalud()
+                            abrirAjustesDelSistema()
                         } label: {
                             HStack {
                                 Image(systemName: "gear")
@@ -179,6 +180,12 @@ struct ContentView: View {
                 self.healthKitConectado = ok
                 self.estadoMensaje = ok ? "Permisos solicitados. Si no viste el diálogo, revisa en Ajustes > Salud." : "HealthKit no disponible."
             }
+        }
+    }
+
+    private func abrirAjustesDelSistema() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
         }
     }
 

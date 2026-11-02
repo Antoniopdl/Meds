@@ -1,6 +1,5 @@
 import Foundation
 import HealthKit
-import UIKit
 
 public final class HealthKitManager: @unchecked Sendable {
     public static let shared = HealthKitManager()
@@ -20,7 +19,7 @@ public final class HealthKitManager: @unchecked Sendable {
         var tiposParaLeer: Set<HKObjectType> = []
         var tiposParaEscribir: Set<HKSampleType> = []
 
-        // 1. Tipos reconocidos por la app Salud que disparan la pantalla nativa de permisos
+        // Tipos reconocidos por la app Salud que disparan la pantalla nativa de permisos
         if let mindfulType = HKObjectType.categoryType(forIdentifier: .mindfulSession) {
             tiposParaLeer.insert(mindfulType)
             tiposParaEscribir.insert(mindfulType)
@@ -67,14 +66,6 @@ public final class HealthKitManager: @unchecked Sendable {
             } catch {
                 print("Error al guardar registro en Salud: \(error.localizedDescription)")
             }
-        }
-    }
-
-    /// Abre los Ajustes de Salud si el usuario ya vio el modal y necesita activar permisos manualmente
-    @MainActor
-    public func abrirAjustesDeSalud() {
-        if let url = URL(string: UIApplication.openSettingsURLString) {
-            UIApplication.shared.open(url)
         }
     }
 }

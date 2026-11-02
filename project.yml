@@ -10,6 +10,8 @@ targets:
     platform: iOS
     sources:
       - path: MedLiveActivity
+    settings:
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     info:
       path: MedLiveActivity/Info.plist
       properties:
@@ -29,6 +31,7 @@ targets:
       - path: MedLiveActivity/Shared
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.antoniopineda.MedLiveActivity.MedLiveWidgets
+      ASSETCATALOG_COMPILER_APPICON_NAME: ""
     info:
       path: MedLiveWidgets/Info.plist
       properties:

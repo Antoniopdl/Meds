@@ -16,15 +16,24 @@ public struct MedicamentoAttributes: ActivityAttributes {
 
     public var nombre: String
     public var dosis: String
-    public var tipo: String            // "Pastilla oral" o "Uso tópico"
-    public var imagenNombre: String     // "sertex", "tradea", "minoxidil"
-    public var horaProgramadaTexto: String // ej: "8:00 A.M."
+    public var tipo: String
+    public var imagenNombre: String
+    public var iconoFallback: String
+    public var horaProgramadaTexto: String
 
-    public init(nombre: String, dosis: String, tipo: String, imagenNombre: String, horaProgramadaTexto: String) {
+    public init(
+        nombre: String,
+        dosis: String,
+        tipo: String,
+        imagenNombre: String,
+        iconoFallback: String = "pills.fill",
+        horaProgramadaTexto: String
+    ) {
         self.nombre = nombre
         self.dosis = dosis
         self.tipo = tipo
         self.imagenNombre = imagenNombre
+        self.iconoFallback = iconoFallback
         self.horaProgramadaTexto = horaProgramadaTexto
     }
 }

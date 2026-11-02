@@ -1,5 +1,6 @@
 import Foundation
 import HealthKit
+import UIKit
 
 public final class HealthKitManager: @unchecked Sendable {
     public static let shared = HealthKitManager()
@@ -12,16 +13,23 @@ public final class HealthKitManager: @unchecked Sendable {
     }
 
     /// Solicita autorización al usuario para leer y escribir datos de salud
+    @MainActor
     public func solicitarPermisos() async -> Bool {
         guard isAvailable else { return false }
 
         var tiposParaLeer: Set<HKObjectType> = []
         var tiposParaEscribir: Set<HKSampleType> = []
 
-        // Tipos estándar para compatibilidad amplia
+        // 1. Tipos reconocidos por la app Salud que disparan la pantalla nativa de permisos
         if let mindfulType = HKObjectType.categoryType(forIdentifier: .mindfulSession) {
             tiposParaLeer.insert(mindfulType)
             tiposParaEscribir.insert(mindfulType)
+        }
+        if let stepType = HKObjectType.quantityType(forIdentifier: .stepCount) {
+            tiposParaLeer.insert(stepType)
+        }
+        if let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) {
+            tiposParaLeer.insert(sleepType)
         }
 
         do {
@@ -37,7 +45,6 @@ public final class HealthKitManager: @unchecked Sendable {
     public func registrarDosisTomada(nombre: String, fecha: Date = Date()) async {
         guard isAvailable else { return }
 
-        // En HealthKit, guardamos un registro con metadata del medicamento
         if let categoryType = HKObjectType.categoryType(forIdentifier: .mindfulSession) {
             let metadata: [String: Any] = [
                 HKMetadataKeySyncIdentifier: "MED-\(nombre)-\(fecha.timeIntervalSince1970)",
@@ -56,10 +63,18 @@ public final class HealthKitManager: @unchecked Sendable {
 
             do {
                 try await healthStore.save(sample)
-                print("Dosis de \(nombre) registrada exitosamente en Salud.")
+                print("Dosis de \(nombre) registrada en Salud.")
             } catch {
                 print("Error al guardar registro en Salud: \(error.localizedDescription)")
             }
+        }
+    }
+
+    /// Abre los Ajustes de Salud si el usuario ya vio el modal y necesita activar permisos manualmente
+    @MainActor
+    public func abrirAjustesDeSalud() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
         }
     }
 }

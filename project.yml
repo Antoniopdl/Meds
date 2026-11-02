@@ -17,6 +17,8 @@ targets:
       properties:
         UILaunchScreen: {}
         NSSupportsLiveActivities: true
+        NSHealthShareUsageDescription: "MedLiveActivity necesita leer tus medicamentos para mostrar tus alertas personalizadas."
+        NSHealthUpdateUsageDescription: "MedLiveActivity registrará tus tomas de medicamentos en la app Salud."
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
     dependencies:

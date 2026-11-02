@@ -159,7 +159,7 @@ struct MedicamentoLiveActivity: Widget {
         } dynamicIsland: { context in
             let modo = context.state.modo
 
-            DynamicIsland {
+            return DynamicIsland {
                 // Estado Expandido
                 DynamicIslandExpandedRegion(.leading) {
                     HStack(spacing: 12) {

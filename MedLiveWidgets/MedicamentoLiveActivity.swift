@@ -9,14 +9,20 @@ struct MedicamentoLiveActivity: Widget {
             // VISTA PANTALLA DE BLOQUEO (Apple HIG Layout)
             // ==========================================
             VStack(alignment: .leading, spacing: 12) {
-                // 1. Fila Superior: Estado del aviso + Hora de la toma
+                // 1. Fila Superior: Cuenta Regresiva Real + Hora de la toma
                 HStack {
                     HStack(spacing: 5) {
-                        Image(systemName: "bell.badge.fill")
+                        Image(systemName: "timer")
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(.orange)
-                        Text("Toma en 10 min")
-                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                        
+                        Text("Toma en ")
+                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                            .foregroundColor(.orange)
+                        
+                        // Cuenta regresiva real nativa de Apple
+                        Text(context.attributes.fechaToma, style: .timer)
+                            .font(.system(size: 12, weight: .bold, design: .monospaced))
                             .foregroundColor(.orange)
                     }
                     .padding(.horizontal, 9)
@@ -40,7 +46,7 @@ struct MedicamentoLiveActivity: Widget {
                     .clipShape(Capsule())
                 }
 
-                // 2. Fila Central: Imagen real + Nombre y Dosis espaciosa
+                // 2. Fila Central: Imagen real + Nombre y Dosis
                 HStack(spacing: 14) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
@@ -81,7 +87,7 @@ struct MedicamentoLiveActivity: Widget {
                     Spacer()
                 }
 
-                // 3. Fila Inferior: Botón Limpio Verde sin borde azul (buttonStyle plain)
+                // 3. Fila Inferior: Botón Limpio Verde que cierra de inmediato
                 Button(intent: RegistrarTomaIntent(nombre: context.attributes.nombre)) {
                     HStack(spacing: 8) {
                         Image(systemName: "checkmark.circle.fill")
@@ -97,7 +103,7 @@ struct MedicamentoLiveActivity: Widget {
                     )
                     .clipShape(Capsule())
                 }
-                .buttonStyle(.plain) // Elimina cualquier borde o halo azul de iOS
+                .buttonStyle(.plain)
             }
             .padding(16)
             .background(
@@ -118,10 +124,10 @@ struct MedicamentoLiveActivity: Widget {
 
         } dynamicIsland: { context in
             // ==========================================
-            // VISTA DYNAMIC ISLAND (Apple HIG)
+            // VISTA DYNAMIC ISLAND
             // ==========================================
             DynamicIsland {
-                // Estado Expandido (inspirado en la referencia del usuario)
+                // Estado Expandido
                 DynamicIslandExpandedRegion(.leading) {
                     HStack(spacing: 12) {
                         Image(context.attributes.imagenNombre)
@@ -149,8 +155,10 @@ struct MedicamentoLiveActivity: Widget {
                         Text(context.attributes.horaProgramadaTexto)
                             .font(.system(size: 14, weight: .bold, design: .rounded))
                             .foregroundColor(.orange)
-                        Text("En 10 min")
-                            .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        
+                        // Cuenta regresiva en la isla
+                        Text(context.attributes.fechaToma, style: .timer)
+                            .font(.system(size: 11, weight: .bold, design: .monospaced))
                             .foregroundColor(.cyan)
                     }
                     .padding(.trailing, 4)
@@ -174,15 +182,15 @@ struct MedicamentoLiveActivity: Widget {
                     .padding(.top, 6)
                 }
             } compactLeading: {
-                // Miniatura transparente del medicamento
+                // Miniatura del medicamento
                 Image(context.attributes.imagenNombre)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 22, height: 22)
             } compactTrailing: {
-                // Hora en color naranja de alto contraste
-                Text(context.attributes.horaProgramadaTexto)
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                // Cuenta regresiva compacta o hora
+                Text(context.attributes.fechaToma, style: .timer)
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
                     .foregroundColor(.orange)
             } minimal: {
                 Image(context.attributes.imagenNombre)

@@ -6,11 +6,13 @@ public struct MedicamentoAttributes: ActivityAttributes {
         public var fueTomado: Bool
         public var estadoTexto: String
         public var horaProgramadaTexto: String
+        public var fechaToma: Date
 
-        public init(fueTomado: Bool, estadoTexto: String, horaProgramadaTexto: String) {
+        public init(fueTomado: Bool, estadoTexto: String, horaProgramadaTexto: String, fechaToma: Date) {
             self.fueTomado = fueTomado
             self.estadoTexto = estadoTexto
             self.horaProgramadaTexto = horaProgramadaTexto
+            self.fechaToma = fechaToma
         }
     }
 
@@ -20,6 +22,7 @@ public struct MedicamentoAttributes: ActivityAttributes {
     public var imagenNombre: String
     public var iconoFallback: String
     public var horaProgramadaTexto: String
+    public var fechaToma: Date
 
     public init(
         nombre: String,
@@ -27,7 +30,8 @@ public struct MedicamentoAttributes: ActivityAttributes {
         tipo: String,
         imagenNombre: String,
         iconoFallback: String = "pills.fill",
-        horaProgramadaTexto: String
+        horaProgramadaTexto: String,
+        fechaToma: Date
     ) {
         self.nombre = nombre
         self.dosis = dosis
@@ -35,5 +39,6 @@ public struct MedicamentoAttributes: ActivityAttributes {
         self.imagenNombre = imagenNombre
         self.iconoFallback = iconoFallback
         self.horaProgramadaTexto = horaProgramadaTexto
+        self.fechaToma = fechaToma
     }
 }

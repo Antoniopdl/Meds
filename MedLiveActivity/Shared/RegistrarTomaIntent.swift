@@ -4,7 +4,7 @@ import ActivityKit
 
 public struct RegistrarTomaIntent: LiveActivityIntent {
     public static var title: LocalizedStringResource = "Marcar como tomada"
-    public static var description = IntentDescription("Registra que la dosis del medicamento fue tomada y lo guarda en Salud")
+    public static var description = IntentDescription("Registra que la dosis del medicamento fue tomada")
 
     @Parameter(title: "Nombre del Medicamento")
     public var nombre: String
@@ -16,19 +16,16 @@ public struct RegistrarTomaIntent: LiveActivityIntent {
     }
 
     public func perform() async throws -> some IntentResult {
-        // 1. Guardar en la base de datos de Apple Health
-        await HealthKitManager.shared.registrarDosisTomada(nombre: self.nombre)
-
-        // 2. Localizar y cerrar la Live Activity en la Dynamic Island y Lock Screen
-        let activities = Activity<MedicamentoAttributes>.activities
         let ahora = Date().formatted(date: .omitted, time: .shortened)
-        
-        for activity in activities {
-            if activity.attributes.nombre == self.nombre {
+
+        // 1. Inmediatamente cerrar la actividad en la pantalla
+        for activity in Activity<MedicamentoAttributes>.activities {
+            if activity.attributes.nombre == self.nombre || self.nombre.isEmpty {
                 let finalState = MedicamentoAttributes.ContentState(
                     fueTomado: true,
                     estadoTexto: "Tomada a las \(ahora)",
-                    horaProgramadaTexto: activity.attributes.horaProgramadaTexto
+                    horaProgramadaTexto: activity.attributes.horaProgramadaTexto,
+                    fechaToma: activity.attributes.fechaToma
                 )
                 await activity.end(
                     ActivityContent(state: finalState, staleDate: nil),
@@ -36,6 +33,12 @@ public struct RegistrarTomaIntent: LiveActivityIntent {
                 )
             }
         }
+
+        // 2. Registrar en segundo plano en Salud sin bloquear la interfaz
+        Task.detached {
+            await HealthKitManager.shared.registrarDosisTomada(nombre: self.nombre)
+        }
+
         return .result()
     }
 }

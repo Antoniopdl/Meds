@@ -10,85 +10,52 @@ struct ItemMedicamento: Identifiable {
     var tipo: String
     var imagenNombre: String
     var horaProgramada: String
+    var hora: Int
+    var minuto: Int
 }
 
 struct ContentView: View {
     @State private var medicamentos: [ItemMedicamento] = [
         ItemMedicamento(
-            nombre: "Sertex (Sertralina)",
-            dosis: "1 pastilla (50mg)",
-            tipo: "Pastilla oral",
-            imagenNombre: "sertex",
-            horaProgramada: "08:00 A.M."
-        ),
-        ItemMedicamento(
             nombre: "Tradea (Metilfenidato)",
-            dosis: "1 pastilla (10mg)",
+            dosis: "Pastilla 27 mg",
             tipo: "Pastilla oral",
             imagenNombre: "tradea",
-            horaProgramada: "02:00 P.M."
+            horaProgramada: "08:29 A.M.",
+            hora: 8,
+            minuto: 29
         ),
         ItemMedicamento(
             nombre: "Minoxidil",
-            dosis: "Aplicación tópica",
+            dosis: "Tópico 5%",
             tipo: "Uso tópico",
             imagenNombre: "minoxidil",
-            horaProgramada: "09:00 P.M."
+            horaProgramada: "08:50 P.M.",
+            hora: 20,
+            minuto: 50
+        ),
+        ItemMedicamento(
+            nombre: "Sertex (Sertralina)",
+            dosis: "Pastilla 50 mg",
+            tipo: "Pastilla oral",
+            imagenNombre: "sertex",
+            horaProgramada: "10:30 P.M.",
+            hora: 22,
+            minuto: 30
         )
     ]
 
     @State private var healthKitConectado: Bool = false
-    @State private var estadoMensaje: String = "Listo para lanzar alertas Live Activity"
+    @State private var estadoMensaje: String = "Listo para probar alertas y cuenta regresiva"
 
     var body: some View {
         NavigationStack {
             List {
-                // SECCIÓN: INTEGRACIÓN APPLE HEALTH
-                Section(header: Text("Sincronización con Apple Health")) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Image(systemName: "heart.fill")
-                                .foregroundColor(.red)
-                                .font(.title2)
-
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Base de Datos de Salud")
-                                    .font(.headline)
-                                Text(healthKitConectado ? "Permisos solicitados • Registro activo" : "Toca conectar para activar permisos en Salud")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-
-                            Spacer()
-
-                            Button(healthKitConectado ? "Activo" : "Conectar") {
-                                conectarSalud()
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .tint(healthKitConectado ? .green : .blue)
-                        }
-
-                        // Acceso directo a Ajustes si iOS ya procesó la primera solicitud
-                        Button {
-                            abrirAjustesDelSistema()
-                        } label: {
-                            HStack {
-                                Image(systemName: "gear")
-                                Text("Ver permisos en Ajustes del iPhone / Salud")
-                            }
-                            .font(.caption)
-                            .foregroundColor(.blue)
-                        }
-                    }
-                    .padding(.vertical, 4)
-                }
-
-                // SECCIÓN: TUS 3 MEDICAMENTOS REALES
-                Section(header: Text("Tus Medicamentos (Aviso 10 min antes)")) {
+                // SECCIÓN: TUS 3 MEDICAMENTOS REALES (Horarios sincronizados)
+                Section(header: Text("Tus 3 Medicamentos (Sincronizados con Salud)")) {
                     ForEach($medicamentos) { $med in
                         VStack(alignment: .leading, spacing: 10) {
                             HStack(spacing: 12) {
-                                // Imagen transparente
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 12, style: .continuous)
                                         .fill(Color(uiColor: .tertiarySystemFill))
@@ -101,7 +68,7 @@ struct ContentView: View {
                                 }
 
                                 VStack(alignment: .leading, spacing: 3) {
-                                    TextField("Nombre", text: $med.nombre)
+                                    Text(med.nombre)
                                         .font(.headline)
 
                                     HStack(spacing: 6) {
@@ -113,7 +80,7 @@ struct ContentView: View {
                                             .foregroundColor(.blue)
                                             .clipShape(Capsule())
 
-                                        TextField("Dosis", text: $med.dosis)
+                                        Text(med.dosis)
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
@@ -130,11 +97,11 @@ struct ContentView: View {
                                 Spacer()
 
                                 Button {
-                                    lanzarLiveActivity(para: med)
+                                    lanzarLiveActivityPrueba(para: med)
                                 } label: {
                                     HStack(spacing: 5) {
-                                        Image(systemName: "sparkles")
-                                        Text("Probar Live (-10m)")
+                                        Image(systemName: "timer")
+                                        Text("Probar 10m")
                                     }
                                     .font(.caption.bold())
                                 }
@@ -146,24 +113,41 @@ struct ContentView: View {
                     }
                 }
 
-                // SECCIÓN: AUTOMATIZACIÓN Y CONTROL
-                Section(header: Text("Automatización y Control")) {
-                    Button {
-                        programarTodasLasAlertas()
-                    } label: {
-                        Label("Activar las 3 alertas (10 min antes)", systemImage: "bell.badge.fill")
-                            .font(.subheadline.bold())
-                    }
-                    .tint(.purple)
+                // SECCIÓN: INTEGRACIÓN CON APPLE HEALTH Y ATAJOS
+                Section(header: Text("Conexión con Apple Health")) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Nota sobre la privacidad de Apple:")
+                            .font(.caption.bold())
+                            .foregroundColor(.primary)
 
+                        Text("Apple restringe la lectura directa de su base de datos nativa de medicamentos a apps sideloaded sin certificado de pago. La forma oficial y 100% nativa de sincronizar tomas en segundo plano es mediante Atajos (Shortcuts).")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+
+                        Button {
+                            abrirAjustesDelSistema()
+                        } label: {
+                            HStack {
+                                Image(systemName: "gear")
+                                Text("Abrir Ajustes de la App en el iPhone")
+                            }
+                            .font(.subheadline.bold())
+                        }
+                        .padding(.top, 4)
+                    }
+                    .padding(.vertical, 4)
+                }
+
+                // SECCIÓN: CONTROL
+                Section(header: Text("Control de Alertas")) {
                     Button(role: .destructive) {
                         cerrarTodasLasActividades()
                     } label: {
-                        Label("Finalizar todas las alertas en pantalla", systemImage: "xmark.circle")
+                        Label("Finalizar todas las alertas activas", systemImage: "xmark.circle")
                     }
                 }
 
-                Section(header: Text("Estado del Sistema")) {
+                Section(header: Text("Estado")) {
                     Text(estadoMensaje)
                         .font(.footnote)
                         .foregroundColor(.secondary)
@@ -173,40 +157,36 @@ struct ContentView: View {
         }
     }
 
-    private func conectarSalud() {
-        Task {
-            let ok = await HealthKitManager.shared.solicitarPermisos()
-            await MainActor.run {
-                self.healthKitConectado = ok
-                self.estadoMensaje = ok ? "Permisos solicitados. Si no viste el diálogo, revisa en Ajustes > Salud." : "HealthKit no disponible."
-            }
-        }
-    }
-
     private func abrirAjustesDelSistema() {
         if let url = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(url)
         }
     }
 
-    private func lanzarLiveActivity(para med: ItemMedicamento) {
+    /// Lanza la Live Activity en modo prueba exactamente con 10 minutos de cuenta regresiva en vivo
+    private func lanzarLiveActivityPrueba(para med: ItemMedicamento) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             estadoMensaje = "Live Activities no autorizadas en Ajustes de iOS."
             return
         }
+
+        // 10 minutos exactos en el futuro para que el temporizador cuente regresivamente 09:59...
+        let fechaObjetivo = Date().addingTimeInterval(600)
 
         let attributes = MedicamentoAttributes(
             nombre: med.nombre,
             dosis: med.dosis,
             tipo: med.tipo,
             imagenNombre: med.imagenNombre,
-            horaProgramadaTexto: med.horaProgramada
+            horaProgramadaTexto: med.horaProgramada,
+            fechaToma: fechaObjetivo
         )
 
         let initialState = MedicamentoAttributes.ContentState(
             fueTomado: false,
             estadoTexto: "Toma en 10 min",
-            horaProgramadaTexto: med.horaProgramada
+            horaProgramadaTexto: med.horaProgramada,
+            fechaToma: fechaObjetivo
         )
 
         do {
@@ -215,17 +195,10 @@ struct ContentView: View {
                 content: .init(state: initialState, staleDate: nil),
                 pushType: nil
             )
-            estadoMensaje = "Live Activity Liquid Glass activa para \(med.nombre)"
+            estadoMensaje = "Live Activity iniciada para \(med.nombre) con cuenta regresiva de 10 min."
         } catch {
             estadoMensaje = "Error: \(error.localizedDescription)"
         }
-    }
-
-    private func programarTodasLasAlertas() {
-        for med in medicamentos {
-            lanzarLiveActivity(para: med)
-        }
-        estadoMensaje = "Se activaron las 3 alertas de medicamentos."
     }
 
     private func cerrarTodasLasActividades() {
@@ -234,7 +207,8 @@ struct ContentView: View {
                 let finalState = MedicamentoAttributes.ContentState(
                     fueTomado: true,
                     estadoTexto: "Descartada",
-                    horaProgramadaTexto: activity.attributes.horaProgramadaTexto
+                    horaProgramadaTexto: activity.attributes.horaProgramadaTexto,
+                    fechaToma: activity.attributes.fechaToma
                 )
                 await activity.end(
                     ActivityContent(state: finalState, staleDate: nil),

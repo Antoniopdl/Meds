@@ -4,21 +4,27 @@ import ActivityKit
 public struct MedicamentoAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         public var fueTomado: Bool
-        public var horaTexto: String
+        public var estadoTexto: String
+        public var horaProgramadaTexto: String
 
-        public init(fueTomado: Bool, horaTexto: String) {
+        public init(fueTomado: Bool, estadoTexto: String, horaProgramadaTexto: String) {
             self.fueTomado = fueTomado
-            self.horaTexto = horaTexto
+            self.estadoTexto = estadoTexto
+            self.horaProgramadaTexto = horaProgramadaTexto
         }
     }
 
     public var nombre: String
     public var dosis: String
-    public var icono: String
+    public var tipo: String            // "Pastilla oral" o "Uso tópico"
+    public var imagenNombre: String     // "sertex", "tradea", "minoxidil"
+    public var horaProgramadaTexto: String // ej: "8:00 A.M."
 
-    public init(nombre: String, dosis: String, icono: String) {
+    public init(nombre: String, dosis: String, tipo: String, imagenNombre: String, horaProgramadaTexto: String) {
         self.nombre = nombre
         self.dosis = dosis
-        self.icono = icono
+        self.tipo = tipo
+        self.imagenNombre = imagenNombre
+        self.horaProgramadaTexto = horaProgramadaTexto
     }
 }

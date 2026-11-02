@@ -15,10 +15,14 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0</string>
+    <string>1.1</string>
     <key>CFBundleVersion</key>
-    <string>1</string>
+    <string>2</string>
     <key>NSSupportsLiveActivities</key>
     <true/>
+    <key>NSHealthShareUsageDescription</key>
+    <string>MedLiveActivity necesita leer tus medicamentos programados para sincronizar los horarios.</string>
+    <key>NSHealthUpdateUsageDescription</key>
+    <string>MedLiveActivity registrará automáticamente cuando tomes cada medicamento en la app Salud.</string>
 </dict>
 </plist>

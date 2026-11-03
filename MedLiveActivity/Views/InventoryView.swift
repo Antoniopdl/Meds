@@ -200,7 +200,7 @@ struct FilaInventarioMedicamento: View {
                         .font(.caption.bold())
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(.amberOrYellow)
+                .tint(.orange)
 
                 // Búsqueda Directa en Google
                 Button {

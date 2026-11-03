@@ -21,6 +21,10 @@ targets:
         NSHealthUpdateUsageDescription: "MedLiveActivity registrará tus tomas de medicamentos en la app Salud."
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
+        CFBundleURLTypes:
+          - CFBundleURLName: com.antoniopineda.MedLiveActivity
+            CFBundleURLSchemes:
+              - medlive
     dependencies:
       - target: MedLiveWidgets
         embed: true

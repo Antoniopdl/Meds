@@ -145,6 +145,49 @@ struct TodayView: View {
                 .padding(.bottom, 24)
             }
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                verificarYLanzarAlertaAutomatica()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                verificarYLanzarAlertaAutomatica()
+            }
+            .onOpenURL { _ in
+                verificarYLanzarAlertaAutomatica()
+            }
+        }
+    }
+
+    private func verificarYLanzarAlertaAutomatica() {
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+
+        let calendar = Calendar.current
+        let ahora = Date()
+        let horaActual = calendar.component(.hour, from: ahora)
+        let minutoActual = calendar.component(.minute, from: ahora)
+        let minutosDesdeMedianoche = (horaActual * 60) + minutoActual
+
+        for med in storage.medicamentos {
+            // Si ya fue tomado hoy, ignorar
+            if storage.fueTomadoHoy(medicamentoId: med.id) { continue }
+
+            // Si ya tiene una Live Activity activa, ignorar
+            let yaExiste = Activity<MedicamentoAttributes>.activities.contains {
+                $0.attributes.nombre == med.nombre
+            }
+            if yaExiste { continue }
+
+            for horario in med.horarios {
+                let minutosMed = (horario.hora * 60) + horario.minuto
+                let diff = minutosMed - minutosDesdeMedianoche
+
+                // Ventana: entre -15 min (atrasada) y +15 min (próxima toma)
+                if diff >= -15 && diff <= 15 {
+                    let modo = diff < 0 ? "urgente" : "normal"
+                    lanzarLiveActivity(med: med, modo: modo)
+                    mensajeEstado = "Auto-activada Live Activity para \(med.nombre)"
+                    return // Solo activar una dosis a la vez
+                }
+            }
         }
     }
 
@@ -154,8 +197,19 @@ struct TodayView: View {
             return
         }
 
-        let fechaObjetivo = modo == "urgente" ? Date().addingTimeInterval(-900) : Date().addingTimeInterval(600)
+        let calendar = Calendar.current
+        var fechaObjetivo = modo == "urgente" ? Date().addingTimeInterval(-900) : Date().addingTimeInterval(600)
         let horaTexto = med.horarios.first?.textoFormateado ?? "08:00 A.M."
+
+        if modo == "normal", let primerHorario = med.horarios.first {
+            var comp = calendar.dateComponents([.year, .month, .day], from: Date())
+            comp.hour = primerHorario.hora
+            comp.minute = primerHorario.minuto
+            comp.second = 0
+            if let fechaReal = calendar.date(from: comp) {
+                fechaObjetivo = fechaReal
+            }
+        }
 
         let attributes = MedicamentoAttributes(
             nombre: med.nombre,

@@ -142,4 +142,13 @@ public final class StorageService: ObservableObject {
             guardarMedicamentos()
         }
     }
+
+    public func fueTomadoHoy(medicamentoId: UUID) -> Bool {
+        let calendar = Calendar.current
+        let hoy = calendar.startOfDay(for: Date())
+        return registros.contains { reg in
+            reg.medicamentoId == medicamentoId &&
+            calendar.startOfDay(for: reg.fechaHora) == hoy
+        }
+    }
 }
